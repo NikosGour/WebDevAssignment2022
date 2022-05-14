@@ -5,9 +5,65 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>WebDev Assignment it22023 2022</title>
+		<script>
+			async function search_book() {
+				try {
+					let text = document.getElementById("search-box").value;
+					let response = await fetch(
+						`http://localhost:8080/api/${text}`
+					);
+					console.log(await response.json());
+				} catch (error) {
+					console.error(error);
+				}
+			}
+
+			async function add_book() {
+				try {
+					let author = document.getElementById("author").value;
+					let title = document.getElementById("title").value;
+					let price = document.getElementById("price").value;
+					let genre = document.getElementById("genre").value;
+
+					const match = price.match(/^\d+\.?\d?$/);
+					if (match) {
+						price = match[0];
+					} else if (price.match(/\d\.\d+/)) {
+						alert(
+							"There can only be ONE decimal point in the price"
+						);
+						return;
+					} else if (price === "") {
+						alert("Price can't be empty");
+						return;
+					} else {
+						alert("Price must be a number");
+						return;
+					}
+
+					let response = await fetch(`http://localhost:8080/api`, {
+						headers: {
+							Accept: "application/json",
+							"Content-Type": "application/json",
+						},
+						mode: "cors",
+						method: "POST",
+						body: JSON.stringify({
+							author: author,
+							title: title,
+							price: price,
+							genre: genre,
+						}),
+					});
+					console.log(await response.json());
+				} catch (error) {
+					console.error(error);
+				}
+			}
+		</script>
 	</head>
 	<body>
-		<form action="#">
+		<div id="add_book_div">
 			<label for="author">Enter Author:</label>
 			<input type="text" id="author" name="author" />
 			<label for="title">Enter Title:</label>
@@ -26,14 +82,17 @@
 				<option value="horror">Horror</option>
 			</select>
 
-			<input type="submit" value="Add Book" />
-		</form>
-		<br />
-		<input
-			type="text"
-			name="search"
-			id="search-box"
-			placeholder="Search for a book"
-		/>
+			<input type="button" value="Add Book" onclick="add_book()" />
+			<br />
+		</div>
+		<div id="search_book_div">
+			<input
+				type="text"
+				name="search"
+				id="search-box"
+				placeholder="Search for a book"
+			/>
+			<input type="button" value="Search" onclick="search_book()" />
+		</div>
 	</body>
 </html>

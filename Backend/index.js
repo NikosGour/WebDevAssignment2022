@@ -11,7 +11,7 @@ const server = http.createServer(async (req, res) => {
 	debug.url = req.url;
 	debug.method = req.method;
 
-	let match = req.url.match(/api\/(\w+)?/);
+	let match = req.url.match(/api\/(.+)?/);
 	if (req.url === "/api") {
 		if (req.method === "GET") {
 			res.writeHead(200, headers);
@@ -43,8 +43,9 @@ const server = http.createServer(async (req, res) => {
 			res.end(JSON.stringify(response));
 		}
 	} else if (match != null) {
+		let utf_decoded_body = decodeURIComponent(match[1]);
 		res.writeHead(404, headers);
-		response = { body: `Not ${match[1]}` };
+		response = { body: `Not ${utf_decoded_body}` };
 		res.end(JSON.stringify(response));
 	} else {
 		res.writeHead(404, headers);
@@ -57,7 +58,7 @@ const server = http.createServer(async (req, res) => {
 	console.log("-".repeat(100));
 });
 
-const PORT = 8080;
+const { PORT, URL } = require("./setting.json");
 
 server.listen(PORT, () => {
 	console.log("-".repeat(100));

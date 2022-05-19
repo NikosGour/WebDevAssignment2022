@@ -61,6 +61,37 @@
 				}
 			}
 		</script>
+		<style>
+			body {
+				display: flex;
+			}
+			#add_book_div {
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				align-items: center;
+				width: 50%;
+				max-width: 100px;
+				margin: 0 auto;
+			}
+
+			#add_book_div * {
+				margin: 10px 0px;
+			}
+
+			#search_book_div {
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				width: 50%;
+				max-width: 100px;
+				margin: 0 auto;
+			}
+
+			#search_book_div input {
+				width: 200px;
+			}
+		</style>
 	</head>
 	<body>
 		<div id="add_book_div">
@@ -83,15 +114,8 @@
 			</select>
 
 			<input type="button" value="Add Book" onclick="add_book()" />
-			<br />
 		</div>
 		<div id="search_book_div">
-			<input
-				type="text"
-				name="search"
-				id="search-box"
-				placeholder="Search for a book"
-			/>
 			<input type="button" value="Search" onclick="search_book()" />
 		</div>
 	</body>

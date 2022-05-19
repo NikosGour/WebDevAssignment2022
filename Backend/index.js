@@ -62,6 +62,6 @@ const { PORT, URL } = require("./setting.json");
 
 server.listen(PORT, () => {
 	console.log("-".repeat(100));
-	console.log(`Server running on port ${PORT}`);
+	console.log(`Server running on port ${PORT} , http://localhost:${PORT}/api`);
 	console.log("-".repeat(100));
 });

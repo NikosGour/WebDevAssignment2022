@@ -6,10 +6,10 @@ const app = express();
 
 const connection = mysql.createConnection(
 	{
-		host: `winhost`,
-		user: `user`,
-		password: `0101`,
-		database: `webdev`,
+		host: `sql11.freemysqlhosting.net`,
+		user: `sql11494173`,
+		password: `lshqlnynZV`,
+		database: `sql11494173`,
 		port: 3306
 	});
 
@@ -27,7 +27,7 @@ app.post(`/api`, async (req, res) =>
 
 	console.log(book);
 
-	const query = `INSERT INTO BOOKS(author, title, genre, price) VALUES (?,?,?,?);`;
+	const query = `INSERT INTO books(author, title, genre, price) VALUES (?,?,?,?);`;
 	const values = [book.author, book.title, book.genre, book.price];
 
 	connection.query(query, values, (err, results) => 
@@ -63,7 +63,7 @@ app.get(`/api/:text`, (req, res) =>
 
 	console.log(str);
 
-	const query = `SELECT * FROM BOOKS WHERE TITLE LIKE '%${str}%';`;
+	const query = `SELECT * FROM books WHERE TITLE LIKE '%${str}%';`;
 
 	console.log(query);
 
@@ -84,5 +84,21 @@ app.listen(PORT, async () =>
 	{
 		if (err) { throw err; }
 		console.log(`Connected to database`);
+
+		connection.query(`show tables`, (err, results) => 
+		{
+			if (err) { throw err; }
+			console.log(results);
+
+		});	
+
+		connection.query(`SELECT * FROM books`, (err, results) => 
+		{
+			if (err) { throw err; }
+			console.log(results);
+
+		}
+		);
 	});
+
 });

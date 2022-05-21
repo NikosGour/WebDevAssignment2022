@@ -9,7 +9,14 @@
 	<style>
 		body {
 			display: flex;
+			background-color: #3c2783;
 		}
+
+		input,
+		select {
+			background-color: #5838c3;
+		}
+
 
 		#add_book_div {
 			display: flex;
@@ -17,36 +24,234 @@
 			justify-content: center;
 			align-items: center;
 			width: 50%;
-			max-width: 100px;
+			max-width: 200px;
 			margin: 0 auto;
 		}
 
-		#add_book_div * {
+
+		/* https://stackoverflow.com/questions/36029610/how-to-add-vertical-line-between-two-divs 
+		vertical divider */
+		#add_book_div::after {
+			background-color: #000;
+			content: "";
+			display: block;
+			width: 2px;
+			height: 100%;
+			left: 50%;
+			top: 0%;
+			position: absolute;
+
+		}
+
+		#add_book_div *,
+		#search_book_div * {
 			margin: 10px 0px;
 		}
 
-		#search_book_div {
+		#search_book_and_results_div {
 			display: flex;
 			flex-direction: column;
 			justify-content: center;
+			align-items: center;
 			width: 50%;
-			max-width: 100px;
+			max-width: 200px;
 			margin: 0 auto;
 		}
 
-		#search_book_div input {
+		#search_book_div {
+			position: relative;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			width: 100%;
+			max-width: 200px;
+			margin: 0 auto;
+			top: 5px;
+		}
+
+		#results {
+			position: relative;
+			width: 100%;
+			height: 100%;
+			margin: 0 auto;
+		}
+
+
+
+
+		#search_button {
+			padding: 5px;
+			border-radius: 7px;
+			transition: background-color 0.5s;
+		}
+
+		#add_book_button {
+			border-radius: 7px;
+			transition: background-color 0.5s;
+		}
+
+
+		#search_button:hover,
+		#add_book_button:hover {
+			background-color: green;
+		}
+
+		#search-box {
 			width: 200px;
+
+			box-sizing: border-box;
+		}
+
+
+		#results table {
+			position: relative;
+			left: -50%;
+		}
+
+		/* https://dev.to/dcodeyt/creating-beautiful-html-tables-with-css-428l 
+		code from here, with modifications
+		styling tables is hard
+		*/
+
+		.styled-table {
+			border-collapse: collapse;
+			margin: 25px 0;
+			font-size: 0.9em;
+			font-family: sans-serif;
+			min-width: 400px;
+			box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+		}
+
+
+		.styled-table thead tr {
+			background-color: #009879;
+			color: #ffffff;
+			text-align: left;
+		}
+
+
+		.styled-table th,
+		.styled-table td {
+			padding: 12px 15px;
+		}
+
+		.styled-table tbody tr {
+			border-bottom: 1px solid #009879;
+		}
+
+
+		.styled-table tbody tr:nth-of-type(even) {
+			background-color: #5838c3;
+		}
+
+		.styled-table tbody tr:last-of-type {
+			border-bottom: 2px solid #009879;
 		}
 	</style>
 	<script>
 		const PORT = 8080;
 		const URL = "http://localhost:" + PORT;
 
+		function create_td(text) {
+			let td = document.createElement("td");
+			td.innerHTML = text;
+			return td;
+		}
+
+		function create_tr(id) {
+			let tr = document.createElement("tr");
+			tr.id = id;
+			return tr;
+		}
+
+		function create_header() {
+			const header = create_tr("header");
+
+			const header_title = document.createElement("th");
+			header_title.innerHTML = "Title";
+
+			const header_author = document.createElement("th");
+			header_author.innerHTML = "Author";
+
+			const header_price = document.createElement("th");
+			header_price.innerHTML = "Price";
+
+			const header_genre = document.createElement("th");
+			header_genre.innerHTML = "Genre";
+
+			header.appendChild(header_title);
+			header.appendChild(header_author);
+			header.appendChild(header_price);
+			header.appendChild(header_genre);
+
+			return header;
+		}
+
 		async function search_book() {
 			try {
 				let text = document.getElementById("search-box").value;
+				if (text.length < 1) {
+					alert("Please enter a search term");
+					return;
+				}
+
+				text = encodeURIComponent(text);
+
 				let response = await fetch(`${URL}/api/${text}`);
-				console.log(await response.json());
+				const results = await response.json()
+
+				const results_div = document.getElementById("results");
+
+				if (results.length < 1) {
+					results_div.innerHTML = "No results found";
+				}
+				else {
+					// results_div.innerHTML = JSON.stringify(results);
+					const table = document.createElement("table");
+					table.classList.add("styled-table")
+
+					const thead = document.createElement("thead");
+					const tbody = document.createElement("tbody");
+					table.appendChild(thead);
+					table.appendChild(tbody);
+
+
+					const header = create_header();
+
+					thead.appendChild(header);
+
+
+
+					const genre_map =
+					{
+						"science_fiction": "Science fiction",
+						"satire": "Satire",
+						"drama": "Drama",
+						"action_and_adventure": "Action and Adventure",
+						"romance": "Romance",
+						"mystery": "Mystery",
+						"horror": "Horror"
+					}
+
+					for (let book of results) {
+						let row = create_tr("row");
+
+						let title = create_td(book.title);
+						let author = create_td(book.author);
+						let price = create_td(book.price + "€");
+						let genre = create_td(genre_map[book.genre]);
+
+						row.appendChild(title);
+						row.appendChild(author);
+						row.appendChild(price);
+						row.appendChild(genre);
+
+						tbody.appendChild(row);
+					}
+
+
+					results_div.innerHTML = table.outerHTML;
+				}
 			} catch (error) {
 				console.error(error);
 			}
@@ -54,10 +259,16 @@
 
 		async function add_book() {
 			try {
-				let author = document.getElementById("author").value;
-				let title = document.getElementById("title").value;
-				let price = document.getElementById("price").value;
-				let genre = document.getElementById("genre").value;
+
+				const author_input = document.getElementById("author");
+				const title_input = document.getElementById("title");
+				const price_input = document.getElementById("price");
+				const genre_input = document.getElementById("genre");
+
+				let author = author_input.value;
+				let title = title_input.value;
+				let price = price_input.value;
+				let genre = genre_input.value;
 
 				const match = price.match(/^\d+\.?\d?$/);
 				if (match) {
@@ -90,6 +301,11 @@
 					}),
 				});
 				console.log(await response.json());
+
+				author_input.value = "";
+				title_input.value = "";
+				price_input.value = "";
+				genre_input.value = "";
 			} catch (error) {
 				console.error(error);
 			}
@@ -117,12 +333,18 @@
 			<option value="horror">Horror</option>
 		</select>
 
-		<input type="button" value="Add Book" onclick="add_book()" />
+		<input type="button" value="Add Book" id="add_book_button" onclick="add_book()" />
 		<br />
 	</div>
-	<div id="search_book_div">
-		<input type="text" name="search" id="search-box" placeholder="Search for a book" />
-		<input type="button" value="Search" onclick="search_book()" />
+	<div id="search_book_and_results_div">
+
+		<div id="search_book_div">
+			<input type="text" name="search" id="search-box" placeholder="Search for a book" />
+			<input type="button" value="Search" id="search_button" onclick="search_book()" />
+		</div>
+		<div id="results">
+
+		</div>
 	</div>
 </body>
 

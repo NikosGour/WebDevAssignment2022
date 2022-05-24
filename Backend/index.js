@@ -84,21 +84,6 @@ app.listen(PORT, async () =>
 	{
 		if (err) { throw err; }
 		console.log(`Connected to database`);
-
-		connection.query(`show tables`, (err, results) => 
-		{
-			if (err) { throw err; }
-			console.log(results);
-
-		});	
-
-		connection.query(`SELECT * FROM books`, (err, results) => 
-		{
-			if (err) { throw err; }
-			console.log(results);
-
-		}
-		);
 	});
 
 });

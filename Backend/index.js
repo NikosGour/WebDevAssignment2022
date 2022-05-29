@@ -6,10 +6,10 @@ const app = express();
 
 const connection = mysql.createConnection(
 	{
-		host: `sql11.freemysqlhosting.net`,
-		user: `sql11494173`,
-		password: `lshqlnynZV`,
-		database: `sql11494173`,
+		host: `b2znyfyiwqijmudiicwe-mysql.services.clever-cloud.com`,
+		user: `ussagye90crzu5za`,
+		password: `l0ZGwojXBaE6qcWcveRy`,
+		database: `b2znyfyiwqijmudiicwe`,
 		port: 3306
 	});
 
